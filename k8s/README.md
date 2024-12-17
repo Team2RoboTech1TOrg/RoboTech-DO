@@ -33,7 +33,7 @@ kubectl taint nodes masternode node-role.kubernetes.io/control-plane:NoSchedule-
 
 ## Установка необходимых дополнительных инструментов
 
-- Установка сетевого плагина flannel:
+- Установка сетевого плагина **Flannel**:
 
 ```bash
 kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml

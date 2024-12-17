@@ -1,0 +1,99 @@
+# Role для DS в namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  #namespace: research
+  name: researcher-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "persistentvolumeclaims"]
+  verbs: ["get", "list", "watch", "create", "delete", "update", "patch"]
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get", "list", "watch", "create", "delete", "update", "patch"]
+- apiGroups: ["kubeflow.org"]
+  resources: ["notebooks", "pipelines"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+- apiGroups: ["monitoring.coreos.com"]
+  resources: ["prometheuses", "alertmanagers", "servicemonitors"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+- apiGroups: ["grafana.com"]
+  resources: ["dashboards"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+
+---
+# ClusterRole для DS
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: researcher-clusterrole
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "persistentvolumeclaims"]
+  verbs: ["get", "list", "watch", "create", "delete", "update", "patch"]
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get", "list", "watch", "create", "delete", "update", "patch"]
+- apiGroups: ["kubeflow.org"]
+  resources: ["notebooks", "pipelines"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+- apiGroups: ["monitoring.coreos.com"]
+  resources: ["prometheuses", "alertmanagers", "servicemonitors"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+- apiGroups: ["grafana.com"]
+  resources: ["dashboards"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+
+---
+# RoleBinding для DS
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: researcher-rolebinding
+  #namespace: research
+subjects:
+- kind: User
+  name: mkorovin@example.com
+  apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: oageeva@example.com
+  apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: udanilova@example.com
+  apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: edanilova@example.com
+  apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: ckalashnikov@example.com
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: researcher-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# ClusterRoleBinding для DS
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: researcher-clusterrolebinding
+subjects:
+- kind: User
+  name: mkorovin@example.com
+  apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: oageeva@example.com
+  apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: udanilova@example.com
+  apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: edanilova@example.com
+  apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: ckalashnikov@example.com
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: researcher-clusterrole
+  apiGroup: rbac.authorization.k8s.io

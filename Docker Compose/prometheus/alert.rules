@@ -1,0 +1,12 @@
+groups:
+- name: test
+  rules:
+  - alert: PrometheusTargetMissing
+    expr: up == 0
+    for: 1m  # Задержка, чтобы избежать случайных срабатываний
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus target missing (instance {{ $labels.instance }})"
+      description: "A Prometheus target has disappeared. An exporter might be crashed. VALUE = {{ $value }}  LABELS: {{ $labels }}"
+

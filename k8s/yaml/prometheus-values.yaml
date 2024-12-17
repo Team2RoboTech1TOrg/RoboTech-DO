@@ -1,0 +1,15 @@
+USER-SUPPLIED VALUES:
+nodeExporter:
+  enabled: false
+prometheus:
+  prometheusSpec:
+    additionalScrapeConfigs:
+      - job_name: 'dcgm-exporter'
+        scrape_interval: 15s   # Можно настроить интервал сбора метрик
+        static_configs:
+          - targets: ['10.102.158.128:9400']  # Используйте внутренний IP-адрес сервиса dcgm-exporter
+      - job_name: 'node-exporter'             # Новый job для node-exporter
+        scrape_interval: 30s
+        scrape_timeout: 20s                  # Интервал сбора метрик
+        static_configs:
+          - targets: ['10.1.1.9:9101'] 

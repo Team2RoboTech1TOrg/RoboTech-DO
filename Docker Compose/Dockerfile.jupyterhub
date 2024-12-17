@@ -1,0 +1,13 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+
+# Задаем значение по умолчанию для JUPYTERHUB_VERSION
+ARG JUPYTERHUB_VERSION=latest
+FROM quay.io/jupyterhub/jupyterhub:$JUPYTERHUB_VERSION
+
+RUN python3 -m pip install --no-cache-dir \
+    dockerspawner \
+    jupyterhub-nativeauthenticator
+
+# Команда запуска JupyterHub
+CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]

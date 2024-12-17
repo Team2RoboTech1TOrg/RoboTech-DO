@@ -1,0 +1,9 @@
+FROM jupyter/scipy-notebook:latest
+
+
+# Копируем зависимости
+COPY req.txt /req.txt
+
+# Установка зависимостей
+RUN pip install --no-cache-dir -r /req.txt
+

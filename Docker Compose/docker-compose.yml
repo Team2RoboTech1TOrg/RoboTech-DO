@@ -1,0 +1,203 @@
+version: '3.9'
+
+services:
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus:/etc/prometheus:ro
+    container_name: prometheus
+    hostname: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Moscow"
+    networks:
+      - custom_networks
+
+  node-exporter:
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    container_name: exporter
+    hostname: exporter
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.ignored-mount-points
+      - ^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)
+    ports:
+      - 9100:9100
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Moscow"
+    networks:
+      - custom_networks
+
+  dcgm_exporter:
+    image: nvidia/dcgm-exporter:3.3.8-3.6.0-ubuntu22.04
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    cap_add:
+      - SYS_ADMIN
+    privileged: true
+    restart: always
+    volumes:
+      - "/sys:/sys"
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+    networks:
+      - custom_networks
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_USER_FILE=/run/secrets/postgres_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+    networks:
+      - custom_networks
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data  
+    secrets:
+      - postgres_user
+      - postgres_password
+    ports:
+      - "5432:5432" 
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    container_name: postgres-exporter
+    environment:
+      - DATA_SOURCE_URI=postgres:5432/postgres?sslmode=disable
+      - DATA_SOURCE_USER_FILE=/run/secrets/postgres_user
+      - DATA_SOURCE_PASS_FILE=/run/secrets/postgres_password
+    networks:
+      - custom_networks
+    volumes:
+      - /shared/repo/PrometheusGrafanaJupyterHub/postgres_exporter.yml:/etc/postgres_exporter.yml:ro
+    restart: unless-stopped
+
+  juteam:
+    build:
+      context: .
+      dockerfile: Dockerfile.team
+    image: juteam
+    container_name: juteam-container
+    networks:
+      - custom_networks
+   
+   
+  jupyterhub:
+    build:
+      context: .
+      dockerfile: Dockerfile.jupyterhub
+      args:
+        JUPYTERHUB_VERSION: latest
+    restart: always
+    image: jupyterhub
+    container_name: jupyterhub
+    networks:
+      - custom_networks
+    volumes:
+      - "./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+      - "jupyterhub-data:/data"
+    ports:
+      - "8000:8000"
+    environment:
+      JUPYTERHUB_ADMIN: admin
+      DOCKER_NETWORK_NAME: prometheusgrafanajupyterhub_custom_networks
+      DOCKER_NOTEBOOK_IMAGE: juteam
+      DOCKER_NOTEBOOK_DIR: /home/jovyan/work
+    labels:
+      - "prometheus-job=jupyterhub"
+    
+  grafana:
+    image: grafana/grafana
+    user: root
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    container_name: grafana
+    hostname: grafana
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Moscow"
+    networks:
+      - custom_networks
+    
+  alertmanager-bot:
+    command:
+      - --alertmanager.url=http://alertmanager:9093
+      - --log.level=info
+      - --store=bolt
+      - --bolt.path=/data/bot.db
+      - --telegram.admin=<Указать свои данные>
+      - --telegram.token=<Указать свои данные>
+    image: metalmatze/alertmanager-bot:0.4.3
+    user: root
+    ports:
+      - 8080:8080
+    container_name: alertmanager-bot
+    hostname: alertmanager-bot
+    environment:
+      TZ: "Europe/Moscow"
+    restart: unless-stopped
+    volumes:
+      - ./data:/data
+    networks:
+      - custom_networks
+
+  alertmanager:
+    image: prom/alertmanager:v0.21.0
+    user: root
+    ports:
+      - 127.0.0.1:9093:9093
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    container_name: alertmanager
+    hostname: alertmanager
+    environment:
+      TZ: "Europe/Moscow"
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/etc/alertmanager/data'
+    networks:
+      - custom_networks
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+    ports:
+      - "80:80"
+    networks:
+      - custom_networks
+
+secrets:
+  postgres_user:
+    file: ./secrets/postgres_user
+  postgres_password:
+    file: ./secrets/postgres_password
+
+
+volumes:
+  jupyterhub-data:
+  shared-logs: 
+networks:
+  custom_networks:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16

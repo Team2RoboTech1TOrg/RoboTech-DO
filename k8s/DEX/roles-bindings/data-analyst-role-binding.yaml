@@ -1,0 +1,86 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  #namespace: analytics
+  name: data-analyst-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "deployments"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+- apiGroups: ["monitoring.coreos.com"]
+  resources: ["prometheuses", "alertmanagers", "servicemonitors"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+- apiGroups: ["grafana.com"]
+  resources: ["dashboards"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  #namespace: analytics
+  name: data-analyst-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: data-analyst-role
+subjects:
+- kind: User
+  name: ngorbenko@example.com
+  apiGroup: rbac.authorization.k8s.io
+#- kind: User
+  #name: ebasaeva@example.com
+  #apiGroup: rbac.authorization.k8s.io
+#- kind: User
+  #name: nevglevskaya@example.com
+  #apiGroup: rbac.authorization.k8s.io
+#- kind: User
+  #name: akorzhov@example.com
+  #apiGroup: rbac.authorization.k8s.io
+#- kind: User
+  #name: vlyadskaya@example.com
+  #apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: data-analyst-clusterrole
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "deployments"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+- apiGroups: ["monitoring.coreos.com"]
+  resources: ["prometheuses", "alertmanagers", "servicemonitors"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+- apiGroups: ["grafana.com"]
+  resources: ["dashboards"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: data-analyst-clusterrolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: data-analyst-clusterrole
+subjects:
+- kind: User
+  name: ngorbenko@example.com
+  apiGroup: rbac.authorization.k8s.io
+#- kind: User
+  #name: ebasaeva@example.com
+  #apiGroup: rbac.authorization.k8s.io
+#- kind: User
+  #name: nevglevskaya@example.com
+  #apiGroup: rbac.authorization.k8s.io
+#- kind: User
+  #name: akorzhov@example.com
+  #apiGroup: rbac.authorization.k8s.io
+#- kind: User
+  #name: vlyadskaya@example.com
+  #apiGroup: rbac.authorization.k8s.io
+
+

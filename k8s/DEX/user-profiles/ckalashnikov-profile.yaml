@@ -1,0 +1,10 @@
+apiVersion: kubeflow.org/v1beta1
+kind: Profile
+metadata:
+  name: ckalashnikov
+  #namespace: research  # Имя общего namespace
+spec:
+  owner:
+    kind: User
+    name: ckalashnikov@example.com  # Email пользователя
+ 

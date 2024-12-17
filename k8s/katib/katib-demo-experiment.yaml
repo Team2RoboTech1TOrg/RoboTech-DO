@@ -1,0 +1,56 @@
+apiVersion: "kubeflow.org/v1beta1"
+kind: Experiment
+metadata:
+  name: demo-hyperparameter-tuning
+  namespace: kubeflow
+spec:
+  objective:
+    type: maximize
+    goal: 100.0
+    objectiveMetricName: Total Reward
+  algorithm:
+    algorithmName: random
+  parameters:
+    - name: --learning_rate
+      parameterType: double
+      feasibleSpace:
+        min: "0.001"
+        max: "0.1"
+    - name: --batch_size
+      parameterType: int
+      feasibleSpace:
+        min: "16"
+        max: "128"
+    - name: --n_steps
+      parameterType: int
+      feasibleSpace:
+        min: "50"
+        max: "200"
+  trialTemplate:
+    primaryContainerName: training-container
+    trialParameters:
+      - name: learningRate
+        description: Learning rate
+        reference: --learning_rate
+      - name: batchSize
+        description: Batch size
+        reference: --batch_size
+      - name: nSteps
+        description: Number of steps
+        reference: --n_steps
+    trialSpec:
+      apiVersion: batch/v1
+      kind: Job
+      spec:
+        template:
+          spec:
+            containers:
+              - name: training-container
+                image: <Созданный докер образ>
+                command:
+                  - "python3"
+                  - "/app/train.py"
+                  - "--learning_rate=${trialParameters.learningRate}"
+                  - "--batch_size=${trialParameters.batchSize}"
+                  - "--n_steps=${trialParameters.nSteps}"
+            restartPolicy: Never

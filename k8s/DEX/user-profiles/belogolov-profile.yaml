@@ -1,0 +1,9 @@
+apiVersion: kubeflow.org/v1beta1
+kind: Profile
+metadata:
+  name: belogolov
+spec:
+  owner:
+    kind: User
+    name: belogolov@example.com  # Email пользователя
+ 

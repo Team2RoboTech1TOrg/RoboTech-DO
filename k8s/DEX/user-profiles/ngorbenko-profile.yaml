@@ -1,0 +1,10 @@
+apiVersion: kubeflow.org/v1beta1
+kind: Profile
+metadata:
+  name: ngorbenko
+  #namespace: analytics  # Имя общего namespace
+spec:
+  owner:
+    kind: User
+    name: ngorbenko@example.com  # Email пользователя
+ 

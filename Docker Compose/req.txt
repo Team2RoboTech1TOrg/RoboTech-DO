@@ -1,0 +1,10 @@
+pygame==2.6.1
+gymnasium==0.29.1
+numpy==1.26.4
+stable_baselines3==2.3.2
+prometheus_client
+tensorboard
+pandas
+psycopg2-binary
+jupyterlab-optuna
+optuna 

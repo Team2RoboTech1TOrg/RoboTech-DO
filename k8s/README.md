@@ -172,6 +172,10 @@ kubectl patch svc prometheus-server -n monitoring -p '{"spec": {"type": "NodePor
 kubectl patch svc istio-ingressgateway -n istio-system -p '{"spec": {"type": "NodePort"}}'
 ```
 
+## Настройка авторизации пользователей
+
+Процедуры настройки авторизации пользователей для доступа к веб-интерфейсу **Kubeflow** описаны в директории [DEX](https://github.com/Team2RoboTech1TOrg/RoboTech-DO/tree/main/k8s/DEX).
+
 ## В завершение 
 
 Необходимо вручную зайти в **Grafana** и настроить пользователей и дашборд для gpu(ID 14574). 

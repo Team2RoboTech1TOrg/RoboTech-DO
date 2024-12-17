@@ -135,6 +135,7 @@ python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(
         - name: ARTIFACTS_SERVICE_PROXY_PORT
           value: "80"
 ```
+
 - Отредактируем манифесты, таким образом, чтобы обеспечить возможность подключения к сервисам kubeflow по http:
   
 ```bash

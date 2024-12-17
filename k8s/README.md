@@ -1,10 +1,10 @@
 # Kubernetes Cluster Setup
 
-Ниже приведено руководство по настройке Kubernetes-кластера и разверытыванию различных инструментов, таких как  Prometheus, Grafana и Kubeflow. Предполагается, что helm и kustomize уже установлены.  
+Ниже приведено руководство по настройке Kubernetes-кластера и разверытыванию различных инструментов, таких как **Prometheus**, **Grafana** и **Kubeflow**. Предполагается, что **Helm** и **Kustomize** уже установлены.  
 
 ## Предварительная очистка системы
 
-Если по какой-либо причине **Kubernetes** уже был установлен, на сервере прежде (например, в случае, если выполняется его переустановка), то желательно сбросить очистить его конфигурацию. Для этого необходимо выполнить следующие команды:
+Если по какой-либо причине **Kubernetes** уже был установлен, на сервере прежде (например, в случае, если выполняется его переустановка), то желательно  очистить его прошлую конфигурацию. Для этого необходимо выполнить следующие команды:
 
 ```bash
 sudo kubeadm reset -f
@@ -17,29 +17,29 @@ sudo reboot
 
 ## Инициализация кластера
  
-Инициализируем кластер:
+Для инициации выполняется команда:
 
 ```bash
 kubeadm init --pod-network-cidr=10.244.0.0/16
 ```
 
-Важно: если в системе установлены и Docker и CRI-O, укажите параметр CRI-сокет: --cri-socket unix:///var/run/crio/crio.sock.
+**Важно:** если в системе установлены два контейнерных движка, например, **Docker** и **CRI-O**, необходимо указать параметр **CRI-сокет**: --cri-socket unix:///var/run/crio/crio.sock.
 
-Если у нас есть только мастер нода, отключим ограничение на использование её для вычислений.
+В нашем случае мы выполняем развертывание в режиме **Single node**, поэтому необходимо отключить предусмотренное по умолчанию ограничение на использование её для вычислений.
 
 ```bash
 kubectl taint nodes masternode node-role.kubernetes.io/control-plane:NoSchedule-
 ```
 
-## Установка инструментов
+## Установка необходимых дополнительных инструментов
 
-Установить flannel:
+- Установка сетевого плагина flannel:
 
 ```bash
 kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
 kubectl get po -n kube-flannel
 ```
-Установить и обновить нужные чарты:
+- Установка и обновление нужных чартов:
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -51,7 +51,7 @@ helm repo add gpu-helm-charts \
 helm repo update
 ```
 
-Установить NFS-контроллер:
+- Установка NFS-контроллера:
 
 ```bash
 helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
@@ -61,17 +61,16 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
   --create-namespace
 ```
 
-### Мониторинг
+# Мониторинг
 
-
-Установить Prometheus, Grafana, Loki (если Loki не устанавливается, решение можно найти в папке loki-stack https://github.com/Team2RoboTech1TOrg/k8s/tree/main/loki-stack):
+Для организации мониторинга установим **Prometheus, Grafana, Loki** (если **Loki** не устанавливается, решение можно найти в папке [loki-stack](https://github.com/Team2RoboTech1TOrg/RoboTech-DO/tree/main/k8s/loki-stack):
 
 ```bash
 helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
 helm install loki grafana/loki-stack --namespace monitoring --set grafana.enabled=false
 ```
 
-Если не работает node-exporter из kube-prometheus-stack, его можно развернуть отдельным контейнером:
+Возможно возникновение проблем с корректной работой **node-exporter** из **kube-prometheus-stack**. В таком случае его можно развернуть отдельным контейнером:
 
 ```bash
 docker run -d \
@@ -80,10 +79,11 @@ docker run -d \
   prom/node-exporter --web.listen-address=":9101"
 ```
   
-### Поддержка GPU
+# Настройка поддержки GPU в кластере
 
-Предполагается, что на сервере уже установлен Nvidia-smi и Nvidia-container-toolkit.  
-Установите плагин от NVIDIA:
+Предполагается, что на сервере уже установлены драйвер **Nvidia-smi**, а также **Nvidia-container-toolkit**.
+
+- Установим плагин от **NVIDIA**:
 
 ```bash
 helm install -i nvdp nvdp/nvidia-device-plugin \
@@ -92,31 +92,34 @@ helm install -i nvdp nvdp/nvidia-device-plugin \
   --version 0.17.0
 ```
 
-Установите экспортер метрик о GPU:
+- Установим экспортер метрик о GPU:
+
 ```bash
 helm repo add gpu-helm-charts \
   https://nvidia.github.io/dcgm-exporter/helm-charts
 ```
 
-### Установка Kubeflow
+# Установка Kubeflow
 
-Клонируем репозиторий:
+- Клонируем репозиторий:
 
 ```bash
 git clone https://github.com/kubeflow/manifests.git
 ```
 
-Настраиваем систему:
+- Настраиваем систему:
 ```bash
 sudo sysctl fs.inotify.max_user_instances=2280
 sudo sysctl fs.inotify.max_user_watches=1255360
 ```
-Изменить пароль и логин пользователя по умолчанию. Для этого редактируем файл common/dex/base/dex-passwords.yaml.
-Пароль можно сгенерировать командой: 
+- В целях безопасности меняем пароль и логин пользователя по умолчанию. Для этого редактируем файл `common/dex/base/dex-passwords.yaml`.
+
+Хеш для обновленного пароля пользователя по умолчанию можно сгенерировать командой: 
+
 ```bash
 python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
 ```
-Изменим  apps/pipeline/upstream/base/pipeline/ml-pipeline-ui-deployment.yaml , а именно добавим DISABLE_GKE_METADATA\
+- Откорректируем файл `apps/pipeline/upstream/base/pipeline/ml-pipeline-ui-deployment.yaml`, добавив `DISABLE_GKE_METADATA`
   ```bash
     spec:
       containers:
@@ -132,17 +135,21 @@ python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(
         - name: ARTIFACTS_SERVICE_PROXY_PORT
           value: "80"
 ```
-Отредактировать манифесты, чтобы можно было подключаться к сервисам kubeflow по http:  
+- Отредактируем манифесты, таким образом, чтобы обеспечить возможность подключения к сервисам kubeflow по http:
+  
 ```bash
 find . -type f -exec sed -i 's/APP_SECURE_COOKIES=true/APP_SECURE_COOKIES=false/g' {} +
 ```
-Применить манифесты:
+
+- Применим манифесты:
+
 ```bash
 kubectl apply -f pvc/mysql-pvc.yaml
 kubectl apply -f pvc/minio-pvc.yaml
 kubectl apply -f pvc/katib-mysql-pvc.yaml
 ```
-Развернуть kubeflow:
+
+- Развернем **Kubeflow**:
 
 ```bash
 while ! kustomize build example | awk '!/well-defined/' | kubectl apply -f -; do 
@@ -151,8 +158,9 @@ while ! kustomize build example | awk '!/well-defined/' | kubectl apply -f -; do
 done
 ```
 
-### Обеспечиваем доступ к сервисам
-Поправить под свои svc либо использовать istio
+## Обеспечиваем доступ к сервисам
+
+- Поправить под свои svc либо использовать istio
 
 ```bash
 kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo 
@@ -162,4 +170,5 @@ kubectl patch svc istio-ingressgateway -n istio-system -p '{"spec": {"type": "No
 ```
 
 ## В завершение 
-Необходимо вручную зайти в grafana и настроить пользователей и дашборд для gpu(ID 14574). 
+
+Необходимо вручную зайти в **Grafana** и настроить пользователей и дашборд для gpu(ID 14574). 

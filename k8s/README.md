@@ -33,13 +33,13 @@ kubectl taint nodes masternode node-role.kubernetes.io/control-plane:NoSchedule-
 
 ## Установка необходимых дополнительных инструментов
 
-- Установка сетевого плагина **Flannel**:
+- Установим сетевой плагин **Flannel**:
 
 ```bash
 kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
 kubectl get po -n kube-flannel
 ```
-- Установка и обновление нужных чартов:
+- Выполним установку и обновление нужных чартов:
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -51,7 +51,7 @@ helm repo add gpu-helm-charts \
 helm repo update
 ```
 
-- Установка NFS-контроллера:
+- Установим NFS-контроллера:
 
 ```bash
 helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
@@ -119,7 +119,9 @@ sudo sysctl fs.inotify.max_user_watches=1255360
 ```bash
 python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
 ```
+
 - Откорректируем файл `apps/pipeline/upstream/base/pipeline/ml-pipeline-ui-deployment.yaml`, добавив `DISABLE_GKE_METADATA`
+  
   ```bash
     spec:
       containers:

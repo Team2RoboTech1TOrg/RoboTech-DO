@@ -1,6 +1,19 @@
-# Установка
+# Описание инфраструктуры, развернутой на сервере с применением k8s
 
-Ниже приведено руководство по настройке Kubernetes-кластера и разверытыванию различных инструментов, таких как **Prometheus**, **Grafana** и **Kubeflow**. Предполагается, что **Helm** и **Kustomize** уже установлены.  
+Это итоговая инфраструктура нашего проекта.
+
+## Список инструментов развернутых в кластере
+ 
+Prometheus, Grafana, Loki, Flannel, NFS Subdir External Provisioner, NVIDIA Device Plugin (nvdp),DCGM Exporter,Kubeflow,Node Exporter, dcgm-exporter, kube-state-metrics, Promtail, Dex, .
+ 
+
+
+![image](https://github.com/user-attachments/assets/3f403df0-e542-41eb-abef-f89caae0cd6d)
+
+
+# Шаги по развертыванию
+
+Ниже приведено руководство по настройке Kubernetes-кластера и разверытыванию различных инструментов, таких как **Prometheus**, **Grafana** и **Kubeflow**. Предполагается, что **Helm**, **Kustomize** , **nfs** и плагины **NVIDIA** уже установлены.  
 
 ## Предварительная очистка системы
 
@@ -23,7 +36,7 @@ sudo reboot
 kubeadm init --pod-network-cidr=10.244.0.0/16
 ```
 
-**Важно:** если в системе установлены два контейнерных движка, например, **Docker** и **CRI-O**, необходимо указать параметр **CRI-сокет**: --cri-socket unix:///var/run/crio/crio.sock.
+**Важно:** если в системе установлены два контейнерных движка, например, **Docker** и **CRI-O**, необходимо указать параметр **CRI-сокет**: --cri-socket unix:///var/run/crio/crio.sock при инициализации кластера.
 
 В нашем случае мы выполняем развертывание в режиме **Single node**, поэтому необходимо отключить предусмотренное по умолчанию ограничение на использование её для вычислений.
 
@@ -163,10 +176,9 @@ done
 
 ## Обеспечиваем доступ к сервисам
 
-- Поправить под свои svc либо использовать istio
-
+- Для доступа к сервисам необходимо пробросить порты, для этого можно использовать следующие команды:
+- 
 ```bash
-kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo 
 kubectl patch svc grafana -n monitoring -p '{"spec": {"type": "NodePort"}}'   
 kubectl patch svc prometheus-server -n monitoring -p '{"spec": {"type": "NodePort"}}'
 kubectl patch svc istio-ingressgateway -n istio-system -p '{"spec": {"type": "NodePort"}}'
@@ -178,4 +190,10 @@ kubectl patch svc istio-ingressgateway -n istio-system -p '{"spec": {"type": "No
 
 ## В завершение 
 
-Необходимо вручную зайти в **Grafana** и настроить пользователей и дашборд для gpu(ID 14574). 
+
+Необходимо вручную зайти в **Grafana** и настроить пользователей и дашборд через графический интерфейс. Что бы узнать пароль, который сгенерировался по умолчанию, необходимо выполнить команду:
+
+```bash
+kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo 
+```
+Для метрик железа и кластера дашборты настроены по умолчанию,  для gpu можно использовать готовый дажбор, его можно найти по ID:14574. 

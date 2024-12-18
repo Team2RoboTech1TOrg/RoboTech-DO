@@ -1,18 +1,28 @@
 # Описание инфраструктуры, развернутой на сервере с применением Docker Compose
 
-На начальном этапе стажировки на сервере был развернут стек ПО для разработки, обучения моделей и организации мониторинга на базе **docker compose**.
+На начальном этапе стажировки на сервере был развернут стек ПО для разработки, обучения моделей и организации мониторинга на базе **Docker Compose**.
 
 Перед началом развертывания следует убедиться, что в системе установлен **Docker**
 
 ## Шаги по развертыванию
 
 1. Клонирование репозитория  
-2. Создание пустой директории `Grafana` на одном уровне с директорией prometheus  
-3. Измените логин/пароль в docker compose у postgresql и postgresql exporter(рекомендуется использовать docker secrets), а так же заменить данные alertmanager-bot на свои. 
-4. Изменяем данные в файлах /alertmanager/config.yml на свои
+2. Создание пустой директории `Grafana` на одном уровне с директорией `Prometheus`  
+3. Изменение логина/пароля в **Docker Compose** у **PostgreSQL** и **PostgreSQL exporter** (рекомендуется использовать `docker secrets`), а также заменить данные `alertmanager-bot` на свои. 
+4. Изменяем данные в файлах `/alertmanager/config.yml` на свои
 
    
-## Список инструментов
+## Перечень инструментов
 
-nginx(для вывода приветственной страницы),alertmanager,alertmanager-bot, grafana, jupyterhub,postgres-exporter,juteam(рабочая среда DS и DA),postgres,postgres-exporter,dcgm_exporter,node-exporter, prometheus.  
+- **Nginx** (для вывода приветственной страницы);
+- **alertmanager**;
+- **alertmanager-bot**;
+- **Grafana**;
+- **JupyterHub**;
+- **Juteam** (рабочая среда DS и DA);
+- **PostgreSQL**;
+- **Postgres-exporter**ж
+- **dcgm_exporter**;
+- **node-exporter**;
+- **Prometheus**.  
  

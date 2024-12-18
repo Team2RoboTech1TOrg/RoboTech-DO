@@ -61,7 +61,7 @@ helm repo add gpu-helm-charts \
 helm repo update
 ```
 
-- Установим NFS-контроллера:
+- Установим NFS-контроллер:
 
 ```bash
 helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \

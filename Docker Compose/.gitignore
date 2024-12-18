@@ -1,0 +1,6 @@
+grafana/
+alertmanager/data/
+logs/
+postgres-data/
+secrets/
+data/

@@ -40,7 +40,7 @@
 3. На следующем этапе было принято решение развернуть кластер **Kubernetes**  со всеми необходимыми инструментами, и погрузиться в изучение "внутреннего мира" **k8s, Kubeflow**, вопросов управления ресурсами кластера, авторизации пользователей, резервного копирования и т.п. Информация об использованной методике развертывания кластера приведена в папке [k8s](https://github.com/Team2RoboTech1TOrg/RoboTech-DO/tree/main/k8s).
 4. Информация о настройке резервного копирования приведена здесь: [Timeshift](https://github.com/Team2RoboTech1TOrg/RoboTech-DO/tree/main/Additionally/Timeshift.md)
 
-5. Информация о настройке VPN соединения здесь: [OpenVPN](https://github.com/Team2RoboTech1TOrg/RoboTech-DO/tree/main/Additionally/OpenVPN.md)
+5. Информация о настройке VPN соединения находится здесь: [OpenVPN](https://github.com/Team2RoboTech1TOrg/RoboTech-DO/tree/main/Additionally/OpenVPN.md)
 
 
 **Fig.3  Схематическое представление текущей конфигурации сервера**

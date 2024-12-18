@@ -33,6 +33,7 @@ kubeadm init --pod-network-cidr=10.244.0.0/16
 ```
 
 **Важно:** если в системе установлены два контейнерных движка, например, **Docker** и **CRI-O**, в команде инициализации необходимо указать параметр **CRI-сокет**: 
+
 `--cri-socket unix:///var/run/crio/crio.sock`.
 
 В нашем случае мы выполняем развертывание в режиме **Single node**, поэтому необходимо отключить предусмотренное по умолчанию ограничение на использование **Master node** для вычислений.
@@ -73,7 +74,7 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
 
 # Мониторинг
 
-Для организации мониторинга установим **Prometheus, Grafana, Loki** (если **Loki** не устанавливается, решение можно найти в папке [loki-stack](https://github.com/Team2RoboTech1TOrg/RoboTech-DO/tree/main/k8s/loki-stack):
+Для организации мониторинга установим **Prometheus, Grafana, Loki** (если **Loki** не устанавливается, решение можно найти в папке [loki-stack](https://github.com/Team2RoboTech1TOrg/RoboTech-DO/tree/main/k8s/loki-stack))
 
 ```bash
 helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace

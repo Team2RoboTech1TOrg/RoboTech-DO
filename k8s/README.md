@@ -7,10 +7,6 @@
 Prometheus, Grafana, Loki, Flannel, NFS Subdir External Provisioner, NVIDIA Device Plugin (nvdp),DCGM Exporter,Kubeflow,Node Exporter, dcgm-exporter, kube-state-metrics, Promtail, Dex, .
  
 
-
-![image](https://github.com/user-attachments/assets/3f403df0-e542-41eb-abef-f89caae0cd6d)
-
-
 # Шаги по развертыванию
 
 Ниже приведено руководство по настройке Kubernetes-кластера и разверытыванию различных инструментов, таких как **Prometheus**, **Grafana** и **Kubeflow**. Предполагается, что **Helm**, **Kustomize** , **nfs** и плагины **NVIDIA** уже установлены.  

@@ -9,7 +9,7 @@ Prometheus, Grafana, Loki, Flannel, NFS Subdir External Provisioner, NVIDIA Devi
 
 # Шаги по развертыванию
 
-Ниже приведено руководство по настройке Kubernetes-кластера и разверытыванию различных инструментов, таких как **Prometheus**, **Grafana** и **Kubeflow**. Предполагается, что **Helm**, **Kustomize** , **nfs** и плагины **NVIDIA** уже установлены.  
+Ниже приведено руководство по настройке Kubernetes-кластера и разверытыванию различных инструментов, таких как **Prometheus**, **Grafana** и **Kubeflow**. На этой стадии предполагается, что **Helm**, **Kustomize** , **nfs** и плагины **NVIDIA** уже установлены.  
 
 ## Предварительная очистка системы
 

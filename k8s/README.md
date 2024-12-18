@@ -4,7 +4,7 @@
 
 ## Список инструментов развернутых в кластере
  
-Prometheus, Grafana, Loki, Flannel, NFS Subdir External Provisioner, NVIDIA Device Plugin (nvdp),DCGM Exporter,Kubeflow,Node Exporter, dcgm-exporter, kube-state-metrics, Promtail, Dex, .
+Prometheus, Grafana, Loki, Flannel, NFS Subdir External Provisioner, NVIDIA Device Plugin (nvdp),DCGM Exporter,Kubeflow,Node Exporter, dcgm-exporter, kube-state-metrics, Promtail, Dex.
  
 
 # Шаги по развертыванию
